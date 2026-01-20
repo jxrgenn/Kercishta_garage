@@ -11,6 +11,8 @@ import {
 import { SERVICES, ICON_MAP } from './constants';
 import { Service } from './types';
 import { translations, Language } from './translations';
+import Hyperspeed from './components/Hyperspeed';
+import { hyperspeedPresets } from './components/HyperSpeedPresets';
 
 // --- API Base URL ---
 const API_BASE_URL = import.meta.env.VITE_API_URL || '';
@@ -654,50 +656,9 @@ const Hero: React.FC<{ lang: Language }> = ({ lang }) => {
   const t = translations[lang];
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black">
-      {/* Animated Gradient Background */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        <div
-          className="absolute inset-0"
-          style={{
-            background: 'linear-gradient(45deg, #FF9FFC, #ca0202, #e2a2a2, #ff3838)',
-            backgroundSize: '400% 400%',
-            animation: 'gradient-shift 20s ease infinite',
-            opacity: 0.15
-          }}
-        ></div>
-        <div
-          className="absolute inset-0"
-          style={{
-            background: 'radial-gradient(circle at 20% 50%, rgba(255, 159, 252, 0.2) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(202, 2, 2, 0.2) 0%, transparent 50%), radial-gradient(circle at 40% 20%, rgba(255, 56, 56, 0.15) 0%, transparent 50%)',
-            animation: 'pulse 8s ease-in-out infinite'
-          }}
-        ></div>
-        <style>{`
-          @keyframes gradient-shift {
-            0%, 100% {
-              background-position: 0% 50%;
-            }
-            25% {
-              background-position: 100% 50%;
-            }
-            50% {
-              background-position: 100% 100%;
-            }
-            75% {
-              background-position: 0% 100%;
-            }
-          }
-          @keyframes pulse {
-            0%, 100% {
-              opacity: 1;
-              transform: scale(1);
-            }
-            50% {
-              opacity: 0.8;
-              transform: scale(1.05);
-            }
-          }
-        `}</style>
+      {/* Hyperspeed Background */}
+      <div className="absolute inset-0 z-0">
+        <Hyperspeed effectOptions={hyperspeedPresets.six} />
       </div>
       <div className="absolute inset-0 z-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px)', backgroundSize: '80px 80px' }}></div>
       <div className="relative z-10 max-w-7xl mx-auto px-6 w-full text-center">
