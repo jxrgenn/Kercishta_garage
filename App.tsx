@@ -3,10 +3,10 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion';
 import {
   Phone, Mail, MapPin, Clock, ArrowRight, ChevronRight, CheckCircle2, Menu, X,
-  Instagram, Facebook, Linkedin,
+  Instagram,
   Languages, Loader2, Lock, LayoutDashboard, History, UserCheck, Plus, Search,
   LogOut, Euro, FileText, Trash2, BarChart3, Calendar, Activity, Droplets,
-  CarFront, Sparkles
+  CarFront, Wrench
 } from 'lucide-react';
 import { SERVICES, ICON_MAP } from './constants';
 import { Service } from './types';
@@ -498,14 +498,14 @@ export default function App() {
             <section className="bg-black py-20 border-y border-zinc-900">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-12">
                 {[
-                  { label: 'Opening Hours', value: 'Mon-Sat' },
+                  { label: 'Opening Hours', value: 'Mo-Sa 07:00-16:00' },
                   { label: 'Years in Business', value: '4+' },
-                  { label: 'Bridge Rental', value: 'Available' },
+                  { label: 'Equipment Rental', value: 'Available' },
                   { label: 'Services Offered', value: '4+' },
                 ].map((stat, i) => (
                   <div key={i} className="text-center lg:text-left">
                     <p className="text-zinc-600 font-technical text-[8px] sm:text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.4em] mb-2">{stat.label}</p>
-                    <p className="text-2xl sm:text-3xl lg:text-4xl font-black text-white uppercase break-words">{stat.value}</p>
+                    <p className="text-xl sm:text-2xl lg:text-3xl font-black text-white uppercase break-words">{stat.value}</p>
                   </div>
                 ))}
               </div>
@@ -543,15 +543,15 @@ export default function App() {
                   <p className="text-xl text-zinc-500 mb-16 font-light leading-relaxed">{t.booking_sub}</p>
                   <div className="flex group mb-12 items-center">
                     <div className="w-16 h-16 bg-zinc-900 flex items-center justify-center mr-8 group-hover:border-red-600 transition-colors"><Phone className="text-red-600" size={28}/></div>
-                    <p className="text-4xl font-black group-hover:text-red-600 transition-colors">+49 731 123 4567</p>
+                    <p className="text-3xl sm:text-4xl font-black group-hover:text-red-600 transition-colors">+49 157 38173920</p>
                   </div>
                   <div className="flex group items-center mb-12">
                     <div className="w-16 h-16 bg-zinc-900 flex items-center justify-center mr-8 group-hover:border-red-600 transition-colors"><MapPin className="text-red-600" size={28}/></div>
-                    <p className="text-xl font-bold uppercase tracking-widest text-zinc-400 group-hover:text-white transition-colors">Dieselstraße 42, 89231 Neu-Ulm</p>
+                    <p className="text-xl font-bold uppercase tracking-widest text-zinc-400 group-hover:text-white transition-colors">Böttgerstraße 7, 89321 Neu-Ulm</p>
                   </div>
                   <div className="w-full h-64 bg-zinc-950 border border-zinc-900 overflow-hidden shadow-2xl">
                     <iframe
-                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2649.8!2d10.0052!3d48.3857!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x479967b7c0c0c0c0%3A0x0!2sDieselstra%C3%9Fe%2042%2C%2089231%20Neu-Ulm%2C%20Germany!5e0!3m2!1sen!2sus!4v1234567890"
+                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2654.123!2d10.0138!3d48.3891!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x479967b7c1234567%3A0x0!2zQsO2dHRnZXJzdHJhw59lIDcsIDg5MzIxIE5ldS1VbG0sIEdlcm1hbnk!5e0!3m2!1sen!2sus!4v1234567890"
                       width="100%"
                       height="100%"
                       style={{ border: 0 }}
@@ -622,9 +622,9 @@ export default function App() {
               </div>
               <p className="text-zinc-500 max-w-sm mb-12 font-light leading-relaxed">{t.footer_desc}</p>
               <div className="flex space-x-10">
-                <Instagram className="text-zinc-700 hover:text-red-600 transition-colors cursor-pointer" />
-                <Facebook className="text-zinc-700 hover:text-red-600 transition-colors cursor-pointer" />
-                <Linkedin className="text-zinc-700 hover:text-red-600 transition-colors cursor-pointer" />
+                <a href="https://www.instagram.com/kercishta_garage/" target="_blank" rel="noopener noreferrer" className="text-zinc-700 hover:text-red-600 transition-colors cursor-pointer">
+                  <Instagram />
+                </a>
               </div>
             </div>
             <div>
@@ -637,7 +637,7 @@ export default function App() {
             </div>
             <div>
                <h4 className="text-white font-black uppercase text-xs mb-10 tracking-[0.4em]">Operational Node</h4>
-               <p className="text-zinc-700 text-[10px] font-technical uppercase leading-loose tracking-widest">Dieselstraße 42, 89231 Neu-Ulm, Germany</p>
+               <p className="text-zinc-700 text-[10px] font-technical uppercase leading-loose tracking-widest">Böttgerstraße 7, 89321 Neu-Ulm, Germany</p>
             </div>
           </div>
           <div className="pt-16 border-t border-zinc-900 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-technical uppercase text-zinc-800 tracking-[0.4em]">
@@ -723,10 +723,10 @@ const Hero: React.FC<{ lang: Language }> = ({ lang }) => {
 const PricingSection: React.FC<{ lang: Language }> = ({ lang }) => {
   const t = translations[lang];
   const items = [
-    { name: lang === 'en' ? "Diagnostic Scan" : "Diagnose-Scan", price: "89", icon: <Activity size={20}/> },
-    { name: lang === 'en' ? "Oil & Service" : "Öl & Service", price: "149", icon: <Droplets size={20}/> },
-    { name: lang === 'en' ? "Bridge Rental (Day)" : "Brückenmiete (Tag)", price: "45", icon: <CarFront size={20}/> },
-    { name: lang === 'en' ? "Detailing Package" : "Detailing-Paket", price: "199", icon: <Sparkles size={20}/> },
+    { name: lang === 'en' ? "Diagnostic Scan" : "Fehler Auslesen", price: "20", icon: <Activity size={20}/> },
+    { name: lang === 'en' ? "Wheel Change" : "Räderwechsel", price: "20", icon: <Wrench size={20}/> },
+    { name: lang === 'en' ? "Tire Change (16\")" : "Reifenwechsel (bis 16\")", price: "60", icon: <Wrench size={20}/> },
+    { name: lang === 'en' ? "Lift Rental (Hour)" : "Hebebühne (Stunde)", price: "20", icon: <CarFront size={20}/> },
   ];
   return (
     <section id="pricing" className="py-32 bg-[#080808] border-y border-zinc-900">

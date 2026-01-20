@@ -3,7 +3,7 @@ import React from 'react';
 import {
   Activity,
   Droplets,
-  Sparkles,
+  Wrench,
   Cpu,
   CarFront
 } from 'lucide-react';
@@ -12,9 +12,9 @@ import { Service, GalleryItem } from './types';
 export const SERVICES: Service[] = [
   {
     id: 'diagnostics',
-    title: 'Diagnostic Failure Codes',
-    shortDesc: 'Advanced engine and electronic diagnostics. We decode failure codes and repair electrical systems with precision.',
-    fullDesc: "Using dealer-level diagnostic hardware, we interface with your vehicle's On-Board Diagnostics (OBD) to read real-time data from every sensor and ECU. We specialize in harness repair, sensor calibration, ECU programming, and electrical troubleshooting. We don't just read codes; we interpret data to find the root cause.",
+    title: 'Overall Diagnostic with OBD Scanner',
+    shortDesc: 'Professional diagnostic service using advanced OBD scanning equipment to identify and resolve vehicle issues.',
+    fullDesc: "Using dealer-level diagnostic hardware, we interface with your vehicle's On-Board Diagnostics (OBD) to read real-time data from every sensor and ECU. We specialize in fault code reading, sensor calibration, ECU programming, and electrical troubleshooting. We don't just read codes; we interpret data to find the root cause and provide actionable solutions.",
     image: 'https://images.unsplash.com/photo-1504222490345-c075b6008014?auto=format&fit=crop&q=80&w=1200',
     problems: ['Check engine lights', 'Sensor malfunctions', 'Battery drain', 'Infotainment failure', 'Faulty sensor readings', 'DPF/EGR issues', 'Short circuits'],
     importance: 'Accurate diagnostics prevent unnecessary parts replacement. Electrical faults can be difficult to track; our systematic approach ensures a permanent fix rather than a temporary bypass.',
@@ -31,24 +31,24 @@ export const SERVICES: Service[] = [
     icon: 'Droplets'
   },
   {
-    id: 'bridge-rental',
-    title: 'Car Bridge Rental',
-    shortDesc: 'Professional-grade hydraulic lifts available for DIY enthusiasts and independent mechanics.',
-    fullDesc: 'Work on your own vehicle using our professional equipment. Our workshop offers hourly and daily bridge rental with secure, covered workspace. Perfect for DIY mechanics who need professional-grade lifting equipment. Safety equipment and basic tools available on-site.',
-    image: 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&q=80&w=1200',
-    problems: ['Need professional lift', 'Home garage too small', 'Safety concerns', 'Lack of proper equipment'],
-    importance: "Professional hydraulic bridges provide safe access to your vehicle's underside, enabling complex repairs and maintenance that would be impossible at home.",
-    icon: 'CarFront'
+    id: 'tires-alignment',
+    title: 'Tire Services & Alignment',
+    shortDesc: 'Complete tire mounting, wheel changes, and precision alignment services for optimal performance and safety.',
+    fullDesc: "Professional tire services including mounting, balancing, and seasonal changes. We handle all tire sizes with specialized equipment. Our wheel alignment service ensures proper tracking, even tire wear, and optimal handling. We service tires up to 20 inches with competitive pricing based on size.",
+    image: 'https://images.unsplash.com/photo-1585789575347-3547e6c2f9c6?auto=format&fit=crop&q=80&w=1200',
+    problems: ['Uneven tire wear', 'Vibration while driving', 'Seasonal tire changes', 'Poor handling', 'Tire mounting needed'],
+    importance: 'Proper tire service and alignment are critical for vehicle safety, handling, and tire longevity. Regular maintenance prevents premature tire wear and improves fuel efficiency.',
+    icon: 'Wrench'
   },
   {
-    id: 'detailing',
-    title: 'Detailing & Cleaning',
-    shortDesc: 'Preserve and protect with high-end surface restoration.',
-    fullDesc: 'More than a car wash. We provide multi-stage paint correction, ceramic coatings, and deep interior extraction to return your vehicle to showroom condition. Professional-grade compounds and sealants ensure lasting protection.',
-    image: 'https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?auto=format&fit=crop&q=80&w=1200',
-    problems: ['Paint oxidation', 'Scratches/swirls', 'Stained upholstery', 'Dull finish', 'Environmental damage'],
-    importance: 'Professional detailing protects your investment against environmental degradation and maintains high resale value.',
-    icon: 'Sparkles'
+    id: 'equipment-rental',
+    title: 'Equipment Rental',
+    shortDesc: 'Professional-grade hydraulic lifts and specialized tools available for DIY enthusiasts and independent mechanics.',
+    fullDesc: "Work on your own vehicle using our professional equipment. Our workshop offers hourly hydraulic lift rental, tool cart access, and specialized tools. Perfect for DIY mechanics who need professional-grade lifting equipment and proper workspace. All rentals include basic safety equipment and workspace access.",
+    image: 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&q=80&w=1200',
+    problems: ['Need professional lift', 'Home garage too small', 'Safety concerns', 'Lack of proper equipment', 'Missing specialized tools'],
+    importance: "Professional hydraulic lifts and specialized tools provide safe access to your vehicle's underside, enabling complex repairs and maintenance that would be impossible at home.",
+    icon: 'CarFront'
   }
 ];
 
@@ -64,7 +64,7 @@ export const GALLERY: GalleryItem[] = [
 export const ICON_MAP: Record<string, React.ReactNode> = {
   Activity: <Activity className="w-6 h-6" />,
   Droplets: <Droplets className="w-6 h-6" />,
-  Sparkles: <Sparkles className="w-6 h-6" />,
+  Wrench: <Wrench className="w-6 h-6" />,
   Cpu: <Cpu className="w-6 h-6" />,
   CarFront: <CarFront className="w-6 h-6" />,
 };
