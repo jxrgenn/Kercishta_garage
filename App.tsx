@@ -576,7 +576,7 @@ export default function App() {
               <div className="max-w-7xl mx-auto px-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
                   {[
-                    { label: t.stats_opening_hours, value: 'Mo-Sa 07:00-16:00' },
+                    { label: t.stats_opening_hours, value: 'Mo-Sa', subtitle: '07:00-16:00' },
                     { label: t.stats_years, value: '4+' },
                     { label: t.stats_equipment, value: lang === 'en' ? 'Available' : 'Verfügbar' },
                     { label: t.stats_services, value: '4+' },
@@ -584,6 +584,7 @@ export default function App() {
                     <div key={i} className="text-center">
                       <p className="text-zinc-600 font-technical text-xs uppercase tracking-[0.3em] mb-4">{stat.label}</p>
                       <p className="text-4xl lg:text-5xl font-black text-white uppercase">{stat.value}</p>
+                      {stat.subtitle && <p className="text-4xl lg:text-5xl font-black text-white uppercase mt-2">{stat.subtitle}</p>}
                     </div>
                   ))}
                 </div>
