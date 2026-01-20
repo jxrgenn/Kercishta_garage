@@ -12,6 +12,9 @@ import { SERVICES, ICON_MAP } from './constants';
 import { Service } from './types';
 import { translations, Language } from './translations';
 
+// --- API Base URL ---
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
 // --- Types ---
 interface Lead {
   _id?: string;
@@ -36,48 +39,48 @@ interface ServiceRecord {
 // --- API Helpers ---
 const api = {
   async fetchLeads(token: string) {
-    const res = await fetch('/api/leads', { headers: { 'Authorization': `Bearer ${token}` } });
+    const res = await fetch(`${API_BASE_URL}/api/leads`, { headers: { 'Authorization': `Bearer ${token}` } });
     return res.json();
   },
   async submitLead(lead: Partial<Lead>) {
-    return fetch('/api/leads', {
+    return fetch(`${API_BASE_URL}/api/leads`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(lead)
     });
   },
   async deleteLead(id: string, token: string) {
-    return fetch(`/api/leads?id=${id}`, { 
+    return fetch(`${API_BASE_URL}/api/leads?id=${id}`, { 
       method: 'DELETE', 
       headers: { 'Authorization': `Bearer ${token}` } 
     });
   },
   async updateLeadStatus(id: string, status: string, token: string) {
-    return fetch('/api/leads', {
+    return fetch(`${API_BASE_URL}/api/leads`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify({ id, status })
     });
   },
   async fetchRecords(token: string) {
-    const res = await fetch('/api/records', { headers: { 'Authorization': `Bearer ${token}` } });
+    const res = await fetch(`${API_BASE_URL}/api/records`, { headers: { 'Authorization': `Bearer ${token}` } });
     return res.json();
   },
   async addRecord(record: Partial<ServiceRecord>, token: string) {
-    return fetch('/api/records', {
+    return fetch(`${API_BASE_URL}/api/records`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify(record)
     });
   },
   async deleteRecord(id: string, token: string) {
-    return fetch(`/api/records?id=${id}`, { 
+    return fetch(`${API_BASE_URL}/api/records?id=${id}`, { 
       method: 'DELETE', 
       headers: { 'Authorization': `Bearer ${token}` } 
     });
   },
   async login(password: string) {
-    const res = await fetch('/api/auth', {
+    const res = await fetch(`${API_BASE_URL}/api/auth`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password })

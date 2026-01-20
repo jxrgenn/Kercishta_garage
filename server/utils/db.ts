@@ -42,6 +42,7 @@ class Database {
         maxIdleTimeMS: 60000,
         serverSelectionTimeoutMS: 5000,
         socketTimeoutMS: 45000,
+        tls: true,
       });
 
       await this.client.connect();
