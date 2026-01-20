@@ -577,8 +577,11 @@ export default function App() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
                   <div className="text-center">
                     <p className="text-zinc-600 font-technical text-sm uppercase tracking-[0.3em] mb-4">{t.stats_opening_hours}</p>
-                    <p className="text-4xl lg:text-5xl font-black text-white uppercase leading-tight">MO-SA</p>
-                    <p className="text-4xl lg:text-5xl font-black text-white uppercase leading-tight">07:00-16:00</p>
+                    <div className="lg:hidden">
+                      <p className="text-4xl font-black text-white uppercase leading-tight">MO-SA</p>
+                      <p className="text-4xl font-black text-white uppercase leading-tight">07:00-16:00</p>
+                    </div>
+                    <p className="hidden lg:block text-5xl font-black text-white uppercase">MO-SA 07:00-16:00</p>
                   </div>
                   {[
                     { label: t.stats_years, value: '4+' },
