@@ -92,12 +92,82 @@ const api = {
   }
 };
 
+// --- Helper Functions ---
+
+const getTranslatedService = (serviceId: string, lang: Language) => {
+  const t = translations[lang];
+  const serviceMap: Record<string, any> = {
+    'diagnostics': {
+      title: t.service_diagnostics_title,
+      shortDesc: t.service_diagnostics_short,
+      fullDesc: t.service_diagnostics_full,
+      problems: t.service_diagnostics_problems,
+      importance: t.service_diagnostics_importance
+    },
+    'maintenance': {
+      title: t.service_maintenance_title,
+      shortDesc: t.service_maintenance_short,
+      fullDesc: t.service_maintenance_full,
+      problems: t.service_maintenance_problems,
+      importance: t.service_maintenance_importance
+    },
+    'tires-alignment': {
+      title: t.service_tires_title,
+      shortDesc: t.service_tires_short,
+      fullDesc: t.service_tires_full,
+      problems: t.service_tires_problems,
+      importance: t.service_tires_importance
+    },
+    'equipment-rental': {
+      title: t.service_equipment_title,
+      shortDesc: t.service_equipment_short,
+      fullDesc: t.service_equipment_full,
+      problems: t.service_equipment_problems,
+      importance: t.service_equipment_importance
+    }
+  };
+  return serviceMap[serviceId] || {};
+};
+
 // --- Components ---
 
 const ScrollProgress = () => {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
   return <motion.div className="fixed top-0 left-0 right-0 h-1 bg-red-600 origin-left z-[70]" style={{ scaleX }} />;
+};
+
+const ScrollToTop = () => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const toggleVisibility = () => {
+      setIsVisible(window.pageYOffset > 500);
+    };
+    window.addEventListener('scroll', toggleVisibility);
+    return () => window.removeEventListener('scroll', toggleVisibility);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  return (
+    <AnimatePresence>
+      {isVisible && (
+        <motion.button
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.8 }}
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 z-50 bg-red-600 hover:bg-white text-white hover:text-black p-4 shadow-2xl transition-all"
+          aria-label="Scroll to top"
+        >
+          <ArrowRight className="rotate-[-90deg]" size={24} />
+        </motion.button>
+      )}
+    </AnimatePresence>
+  );
 };
 
 const Navbar: React.FC<{
@@ -392,6 +462,7 @@ const AdminDashboard: React.FC<{
 
 const ServiceCard: React.FC<{ service: Service, index: number, lang: Language }> = ({ service, index, lang }) => {
   const t = translations[lang];
+  const translatedService = getTranslatedService(service.id, lang);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -413,8 +484,8 @@ const ServiceCard: React.FC<{ service: Service, index: number, lang: Language }>
       className="group bg-[#0c0c0c] p-6 sm:p-10 lg:p-12 hover:border-red-600/40 border border-transparent transition-all flex flex-col h-full relative"
     >
       <div className="text-red-600 mb-4 sm:mb-6 lg:mb-10 transform group-hover:scale-110 transition-transform origin-left">{ICON_MAP[service.icon]}</div>
-      <h3 className="text-sm sm:text-lg lg:text-2xl font-black text-white uppercase mb-2 sm:mb-3 lg:mb-4 tracking-tighter group-hover:text-red-500 transition-colors leading-tight">{service.title}</h3>
-      <p className="text-zinc-500 mb-4 sm:mb-6 lg:mb-10 text-xs sm:text-sm flex-grow leading-relaxed">{service.shortDesc}</p>
+      <h3 className="text-sm sm:text-lg lg:text-xl font-black text-white uppercase mb-2 sm:mb-3 lg:mb-4 tracking-tighter group-hover:text-red-500 transition-colors leading-tight">{translatedService.title}</h3>
+      <p className="text-zinc-500 mb-4 sm:mb-6 lg:mb-10 text-xs sm:text-sm flex-grow leading-relaxed">{translatedService.shortDesc}</p>
       <a href={`#service-${service.id}`} className="inline-flex items-center text-white font-bold uppercase text-[8px] sm:text-[10px] tracking-[0.3em] sm:tracking-[0.4em] group-hover:text-red-500 transition-colors">
         <span className="hidden sm:inline">{t.full_protocol}</span><span className="sm:hidden">Details</span> <ChevronRight size={12} className="ml-1 sm:ml-2 group-hover:translate-x-1 transition-transform" />
       </a>
@@ -422,25 +493,28 @@ const ServiceCard: React.FC<{ service: Service, index: number, lang: Language }>
   );
 };
 
-const DetailedService: React.FC<{ service: Service, reverse?: boolean }> = ({ service, reverse }) => {
+const DetailedService: React.FC<{ service: Service, reverse?: boolean, lang: Language }> = ({ service, reverse, lang }) => {
+  const t = translations[lang];
+  const translatedService = getTranslatedService(service.id, lang);
+
   return (
     <section id={`service-${service.id}`} className="py-32 border-b border-zinc-900 scroll-mt-20 bg-black">
       <div className={`max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-20 items-center ${reverse ? 'lg:flex-row-reverse' : ''}`}>
         <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="relative overflow-hidden group">
-          <img src={service.image} alt={service.title} className="w-full aspect-video object-cover grayscale brightness-50 group-hover:scale-105 group-hover:grayscale-0 transition-all duration-1000" />
+          <img src={service.image} alt={translatedService.title} className="w-full aspect-video object-cover grayscale brightness-50 group-hover:scale-105 group-hover:grayscale-0 transition-all duration-1000" />
           <div className="absolute inset-0 border-[20px] border-black/40 pointer-events-none group-hover:border-[10px] transition-all duration-500"></div>
         </motion.div>
         <div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white uppercase mb-8 tracking-tighter leading-none">{service.title}</h2>
-          <p className="text-xl text-zinc-400 mb-12 font-light leading-relaxed">{service.fullDesc}</p>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white uppercase mb-8 tracking-tighter leading-none">{translatedService.title}</h2>
+          <p className="text-lg text-zinc-400 mb-12 font-light leading-relaxed">{translatedService.fullDesc}</p>
           <div className="grid sm:grid-cols-2 gap-8">
             <div className="p-8 bg-zinc-950 border border-zinc-900 border-l-red-600">
-              <h4 className="text-red-600 font-black uppercase text-[10px] mb-4 tracking-widest">Failures Fixed</h4>
-              <ul className="space-y-3">{service.problems.map((p, i) => <li key={i} className="text-zinc-500 text-sm italic">- {p}</li>)}</ul>
+              <h4 className="text-red-600 font-black uppercase text-[10px] mb-4 tracking-widest">{t.service_failures_fixed}</h4>
+              <ul className="space-y-3">{translatedService.problems.map((p: string, i: number) => <li key={i} className="text-zinc-500 text-sm italic">- {p}</li>)}</ul>
             </div>
             <div className="p-8 bg-zinc-950 border border-zinc-900 border-l-red-600">
-              <h4 className="text-red-600 font-black uppercase text-[10px] mb-4 tracking-widest">Criticality</h4>
-              <p className="text-zinc-500 text-sm leading-relaxed">{service.importance}</p>
+              <h4 className="text-red-600 font-black uppercase text-[10px] mb-4 tracking-widest">{t.service_criticality}</h4>
+              <p className="text-zinc-500 text-sm leading-relaxed">{translatedService.importance}</p>
             </div>
           </div>
         </div>
@@ -489,6 +563,7 @@ export default function App() {
   return (
     <div className="bg-[#050505] text-[#f4f4f4] min-h-screen selection:bg-red-600">
       <ScrollProgress />
+      <ScrollToTop />
       <Navbar lang={lang} setLang={setLang} logo={logo} view={view} onExitAdmin={handleLogout} />
       
       <main>
@@ -535,7 +610,7 @@ export default function App() {
 
             {/* RESTORED: Deep Service Protocols */}
             {SERVICES.slice(0, 4).map((s, i) => (
-              <DetailedService key={s.id} service={s} reverse={i % 2 !== 0} />
+              <DetailedService key={s.id} service={s} reverse={i % 2 !== 0} lang={lang} />
             ))}
 
             <PricingSection lang={lang} />
@@ -666,7 +741,7 @@ const Hero: React.FC<{ lang: Language }> = ({ lang }) => {
       <div className="relative z-10 max-w-7xl mx-auto px-6 w-full text-center">
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2 }}>
           <div className="inline-flex items-center space-x-3 px-6 py-2 bg-zinc-900/80 border border-zinc-800 rounded-full mb-10 shadow-2xl">
-            <span className="w-2 h-2 rounded-full bg-red-600 animate-ping"></span>
+            <span className="w-2 h-2 rounded-full bg-red-600"></span>
             <span className="text-zinc-400 font-technical text-[10px] uppercase tracking-[0.4em]">{t.hero_tag}</span>
           </div>
           <h1 className="text-6xl md:text-[8rem] font-black text-white uppercase leading-[0.85] mb-10 tracking-tighter">
@@ -685,31 +760,116 @@ const Hero: React.FC<{ lang: Language }> = ({ lang }) => {
 
 const PricingSection: React.FC<{ lang: Language }> = ({ lang }) => {
   const t = translations[lang];
-  const items = [
-    { name: t.pricing_diagnostic, price: "20", icon: <Activity size={24}/> },
-    { name: t.pricing_wheel, price: "20", icon: <Wrench size={24}/> },
-    { name: t.pricing_tire, price: "60", icon: <Wrench size={24}/> },
-    { name: t.pricing_lift, price: "20", icon: <CarFront size={24}/> },
+
+  const diagnosticsItems = [
+    { name: t.pricing_diagnostic, price: "20", desc: lang === 'en' ? "Full system scan" : "Komplette Systemprüfung" },
   ];
+
+  const maintenanceItems = [
+    { name: t.pricing_oil_change, price: "60+", desc: lang === 'en' ? "Synthetic oil included" : "Synthetisches Öl inklusive" },
+    { name: t.pricing_brake_pads, price: "80+", desc: lang === 'en' ? "Labor only" : "Nur Arbeitskosten" },
+    { name: t.pricing_battery, price: "40+", desc: lang === 'en' ? "Installation service" : "Einbauservice" },
+  ];
+
+  const tireItems = [
+    { name: t.pricing_wheel, price: "20", desc: lang === 'en' ? "Seasonal change" : "Saisonwechsel" },
+    { name: t.pricing_tire_16, price: "60", desc: lang === 'en' ? "Mount & balance" : "Montage & Auswuchten" },
+    { name: t.pricing_tire_17, price: "70", desc: lang === 'en' ? "Mount & balance" : "Montage & Auswuchten" },
+    { name: t.pricing_tire_18, price: "80", desc: lang === 'en' ? "Mount & balance" : "Montage & Auswuchten" },
+    { name: t.pricing_tire_19, price: "90", desc: lang === 'en' ? "Mount & balance" : "Montage & Auswuchten" },
+    { name: t.pricing_tire_20, price: "100", desc: lang === 'en' ? "Mount & balance" : "Montage & Auswuchten" },
+    { name: t.pricing_alignment, price: "80", desc: lang === 'en' ? "4-wheel alignment" : "4-Rad Achsvermessung" },
+  ];
+
+  const rentalItems = [
+    { name: t.pricing_lift, price: "20", desc: lang === 'en' ? "Tools included" : "Werkzeuge inklusive" },
+  ];
+
   return (
-    <section id="pricing" className="py-32 bg-[#080808] border-y border-zinc-900">
+    <section id="pricing" className="py-24 bg-[#080808] border-y border-zinc-900">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="max-w-2xl mb-24">
-          <span className="text-red-600 font-technical text-xs font-black uppercase tracking-[0.5em] block mb-6">{t.nav_pricing}</span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white uppercase tracking-tighter leading-none mb-6">{t.pricing_title}</h2>
-          <p className="text-zinc-500 font-light leading-relaxed">{t.pricing_sub}</p>
+        <div className="max-w-2xl mb-16">
+          <span className="text-red-600 font-technical text-xs font-black uppercase tracking-[0.5em] block mb-4">{t.nav_pricing}</span>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white uppercase tracking-tighter leading-none mb-4">{t.pricing_title}</h2>
+          <p className="text-zinc-500 font-light text-sm leading-relaxed">{t.pricing_sub}</p>
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-2 gap-px bg-zinc-900 border border-zinc-900">
-          {items.map((item, i) => (
-            <div key={i} className="p-10 sm:p-16 bg-black hover:bg-zinc-950 transition-all group cursor-default flex flex-col items-center text-center">
-              <div className="text-zinc-800 mb-8 group-hover:text-red-600 transition-colors duration-500">{item.icon}</div>
-              <h4 className="text-zinc-400 font-bold uppercase text-xs sm:text-sm tracking-[0.2em] mb-6 group-hover:text-white transition-colors">{item.name}</h4>
-              <div className="flex items-baseline justify-center space-x-2">
-                <span className="text-white text-5xl sm:text-6xl font-black">{item.price}</span>
-                <span className="text-red-600 font-black text-2xl sm:text-3xl group-hover:translate-x-1 transition-transform inline-block">€</span>
-              </div>
+
+        <div className="space-y-12">
+          {/* Diagnostics */}
+          <div>
+            <h3 className="text-red-600 font-black uppercase text-xs mb-6 tracking-[0.3em]">{lang === 'en' ? 'Diagnostics' : 'Diagnose'}</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-zinc-900 border border-zinc-900">
+              {diagnosticsItems.map((item, i) => (
+                <div key={i} className="p-6 bg-black hover:bg-zinc-950 transition-all group">
+                  <div className="flex items-baseline justify-between mb-2">
+                    <h4 className="text-white font-bold uppercase text-xs tracking-wide group-hover:text-red-500 transition-colors flex-1">{item.name}</h4>
+                    <div className="flex items-baseline space-x-1">
+                      <span className="text-red-600 text-2xl font-black">{item.price}</span>
+                      <span className="text-zinc-600 text-sm font-black">€</span>
+                    </div>
+                  </div>
+                  <p className="text-zinc-600 text-[10px] uppercase font-technical tracking-wider">{item.desc}</p>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
+
+          {/* Maintenance */}
+          <div>
+            <h3 className="text-red-600 font-black uppercase text-xs mb-6 tracking-[0.3em]">{lang === 'en' ? 'Maintenance' : 'Wartung'}</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-zinc-900 border border-zinc-900">
+              {maintenanceItems.map((item, i) => (
+                <div key={i} className="p-6 bg-black hover:bg-zinc-950 transition-all group">
+                  <div className="flex items-baseline justify-between mb-2">
+                    <h4 className="text-white font-bold uppercase text-xs tracking-wide group-hover:text-red-500 transition-colors flex-1">{item.name}</h4>
+                    <div className="flex items-baseline space-x-1">
+                      <span className="text-red-600 text-2xl font-black">{item.price}</span>
+                      <span className="text-zinc-600 text-sm font-black">€</span>
+                    </div>
+                  </div>
+                  <p className="text-zinc-600 text-[10px] uppercase font-technical tracking-wider">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Tires & Wheels */}
+          <div>
+            <h3 className="text-red-600 font-black uppercase text-xs mb-6 tracking-[0.3em]">{lang === 'en' ? 'Tires & Wheels' : 'Reifen & Räder'}</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-zinc-900 border border-zinc-900">
+              {tireItems.map((item, i) => (
+                <div key={i} className="p-6 bg-black hover:bg-zinc-950 transition-all group">
+                  <div className="flex items-baseline justify-between mb-2">
+                    <h4 className="text-white font-bold uppercase text-xs tracking-wide group-hover:text-red-500 transition-colors flex-1">{item.name}</h4>
+                    <div className="flex items-baseline space-x-1">
+                      <span className="text-red-600 text-2xl font-black">{item.price}</span>
+                      <span className="text-zinc-600 text-sm font-black">€</span>
+                    </div>
+                  </div>
+                  <p className="text-zinc-600 text-[10px] uppercase font-technical tracking-wider">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Equipment Rental */}
+          <div>
+            <h3 className="text-red-600 font-black uppercase text-xs mb-6 tracking-[0.3em]">{lang === 'en' ? 'Equipment Rental' : 'Gerätevermietung'}</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-zinc-900 border border-zinc-900">
+              {rentalItems.map((item, i) => (
+                <div key={i} className="p-6 bg-black hover:bg-zinc-950 transition-all group">
+                  <div className="flex items-baseline justify-between mb-2">
+                    <h4 className="text-white font-bold uppercase text-xs tracking-wide group-hover:text-red-500 transition-colors flex-1">{item.name}</h4>
+                    <div className="flex items-baseline space-x-1">
+                      <span className="text-red-600 text-2xl font-black">{item.price}</span>
+                      <span className="text-zinc-600 text-sm font-black">€</span>
+                    </div>
+                  </div>
+                  <p className="text-zinc-600 text-[10px] uppercase font-technical tracking-wider">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>
