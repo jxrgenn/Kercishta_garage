@@ -1,14 +1,13 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion';
-import { 
+import {
   Phone, Mail, MapPin, Clock, ArrowRight, ChevronRight, CheckCircle2, Menu, X,
   Instagram, Facebook, Linkedin, Monitor, Wrench, ShieldCheck, TrendingUp,
   Languages, Loader2, Lock, LayoutDashboard, History, UserCheck, Plus, Search,
   LogOut, Euro, FileText, Trash2, BarChart3, Calendar, Activity, Droplets,
   Disc, Gauge, Wind, Target, Cpu, ChevronUp
 } from 'lucide-react';
-import { GoogleGenAI } from "@google/genai";
 import { SERVICES, ICON_MAP } from './constants';
 import { Service } from './types';
 import { translations, Language } from './translations';
@@ -83,7 +82,8 @@ const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password })
     });
-    return res.json();
+    const data = await res.json();
+    return data.success ? data.data : data;
   }
 };
 
@@ -95,9 +95,9 @@ const ScrollProgress = () => {
   return <motion.div className="fixed top-0 left-0 right-0 h-1 bg-red-600 origin-left z-[70]" style={{ scaleX }} />;
 };
 
-const Navbar: React.FC<{ 
-  lang: Language, setLang: (l: Language) => void, logo: string | null,
-  view: 'main' | 'admin', onExitAdmin: () => void 
+const Navbar: React.FC<{
+  lang: Language, setLang: (l: Language) => void, logo: string,
+  view: 'main' | 'admin', onExitAdmin: () => void
 }> = ({ lang, setLang, logo, view, onExitAdmin }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -113,7 +113,7 @@ const Navbar: React.FC<{
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled || view === 'admin' ? 'bg-black/95 border-b border-zinc-800 py-3' : 'bg-transparent py-6'}`}>
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         <a href="/" className="flex items-center space-x-3 group">
-          {logo ? <img src={logo} className="w-12 h-12 object-contain" /> : <div className="w-10 h-10 bg-red-600 flex items-center justify-center font-bold text-xl italic">K</div>}
+          <img src={logo} alt="Kërçishta Garage Logo" className="w-12 h-12 object-contain" />
           <div className="flex flex-col">
             <span className="font-extrabold text-xl uppercase text-white leading-none">Kërçishta<span className="text-red-600">Garage</span></span>
             <span className="text-[8px] font-technical uppercase tracking-[0.4em] text-zinc-500">Automotive Excellence</span>
@@ -142,14 +142,16 @@ const Navbar: React.FC<{
   );
 };
 
-const AdminDashboard: React.FC<{ 
-  lang: Language, token: string, onLogout: () => void 
+const AdminDashboard: React.FC<{
+  lang: Language, token: string, onLogout: () => void
 }> = ({ lang, token, onLogout }) => {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [history, setHistory] = useState<ServiceRecord[]>([]);
   const [tab, setTab] = useState<'leads' | 'ops' | 'analytics'>('leads');
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [leadFilter, setLeadFilter] = useState({ status: 'all', search: '' });
+  const [opsFilter, setOpsFilter] = useState({ search: '', profitFilter: 'all', dateRange: 'all' });
   const t = translations[lang];
 
   const fetchData = async () => {
@@ -170,6 +172,43 @@ const AdminDashboard: React.FC<{
     return { revenue, cost, profit: revenue - cost };
   }, [history]);
 
+  const filteredLeads = useMemo(() => {
+    return leads.filter(lead => {
+      const statusMatch = leadFilter.status === 'all' || lead.status === leadFilter.status;
+      const searchMatch = leadFilter.search === '' ||
+        lead.name.toLowerCase().includes(leadFilter.search.toLowerCase()) ||
+        lead.car.toLowerCase().includes(leadFilter.search.toLowerCase()) ||
+        lead.phone.includes(leadFilter.search);
+      return statusMatch && searchMatch;
+    });
+  }, [leads, leadFilter]);
+
+  const filteredHistory = useMemo(() => {
+    return history.filter(record => {
+      const profit = Number(record.revenue) - Number(record.cost);
+      const searchMatch = opsFilter.search === '' ||
+        record.car.toLowerCase().includes(opsFilter.search.toLowerCase()) ||
+        record.issue.toLowerCase().includes(opsFilter.search.toLowerCase()) ||
+        record.solution.toLowerCase().includes(opsFilter.search.toLowerCase());
+      const profitMatch = opsFilter.profitFilter === 'all' ||
+        (opsFilter.profitFilter === 'profit' && profit > 0) ||
+        (opsFilter.profitFilter === 'loss' && profit <= 0);
+
+      let dateMatch = true;
+      if (opsFilter.dateRange !== 'all') {
+        const recordDate = new Date(record.date);
+        const now = new Date();
+        const daysDiff = Math.floor((now.getTime() - recordDate.getTime()) / (1000 * 60 * 60 * 24));
+
+        if (opsFilter.dateRange === 'week') dateMatch = daysDiff <= 7;
+        else if (opsFilter.dateRange === 'month') dateMatch = daysDiff <= 30;
+        else if (opsFilter.dateRange === 'quarter') dateMatch = daysDiff <= 90;
+      }
+
+      return searchMatch && profitMatch && dateMatch;
+    });
+  }, [history, opsFilter]);
+
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-black"><Loader2 className="animate-spin text-red-600" size={48}/></div>;
 
   return (
@@ -181,10 +220,10 @@ const AdminDashboard: React.FC<{
           <div className="bg-zinc-950 border border-zinc-900 p-10 shadow-xl"><p className="text-[10px] font-technical text-zinc-600 uppercase mb-4">Net Yield</p><p className="text-4xl font-black text-red-600">+{stats.profit.toLocaleString()} €</p></div>
         </div>
 
-        <div className="flex space-x-2 bg-zinc-900 p-1 border border-zinc-800 mb-10 w-fit">
-          <button onClick={() => setTab('leads')} className={`px-8 py-3 text-[10px] font-black uppercase tracking-[0.2em] transition-all ${tab === 'leads' ? 'bg-red-600 text-white shadow-xl' : 'text-zinc-500 hover:text-white'}`}>Leads</button>
-          <button onClick={() => setTab('ops')} className={`px-8 py-3 text-[10px] font-black uppercase tracking-[0.2em] transition-all ${tab === 'ops' ? 'bg-red-600 text-white shadow-xl' : 'text-zinc-500 hover:text-white'}`}>Operations</button>
-          <button onClick={() => setTab('analytics')} className={`px-8 py-3 text-[10px] font-black uppercase tracking-[0.2em] transition-all ${tab === 'analytics' ? 'bg-red-600 text-white shadow-xl' : 'text-zinc-500 hover:text-white'}`}>Analytics</button>
+        <div className="flex flex-wrap sm:flex-nowrap gap-2 sm:space-x-2 sm:gap-0 bg-zinc-900 p-1 border border-zinc-800 mb-10 w-full sm:w-fit">
+          <button onClick={() => setTab('leads')} className={`flex-1 sm:flex-none px-4 sm:px-8 py-3 text-[10px] font-black uppercase tracking-[0.1em] sm:tracking-[0.2em] transition-all ${tab === 'leads' ? 'bg-red-600 text-white shadow-xl' : 'text-zinc-500 hover:text-white'}`}>Leads</button>
+          <button onClick={() => setTab('ops')} className={`flex-1 sm:flex-none px-4 sm:px-8 py-3 text-[10px] font-black uppercase tracking-[0.1em] sm:tracking-[0.2em] transition-all ${tab === 'ops' ? 'bg-red-600 text-white shadow-xl' : 'text-zinc-500 hover:text-white'}`}>Operations</button>
+          <button onClick={() => setTab('analytics')} className={`flex-1 sm:flex-none px-4 sm:px-8 py-3 text-[10px] font-black uppercase tracking-[0.1em] sm:tracking-[0.2em] transition-all ${tab === 'analytics' ? 'bg-red-600 text-white shadow-xl' : 'text-zinc-500 hover:text-white'}`}>Analytics</button>
         </div>
 
         {tab === 'ops' && (
@@ -221,13 +260,91 @@ const AdminDashboard: React.FC<{
           </motion.div>
         )}
 
+        {tab === 'leads' && (
+          <div className="mb-8 bg-zinc-950 border border-zinc-900 p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-[10px] font-technical text-zinc-600 uppercase mb-2 block">Search</label>
+                <input
+                  type="text"
+                  placeholder="Name, phone, car..."
+                  value={leadFilter.search}
+                  onChange={(e) => setLeadFilter({ ...leadFilter, search: e.target.value })}
+                  className="w-full bg-black border border-zinc-800 p-3 text-white text-sm outline-none focus:border-red-600"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-technical text-zinc-600 uppercase mb-2 block">Status</label>
+                <select
+                  value={leadFilter.status}
+                  onChange={(e) => setLeadFilter({ ...leadFilter, status: e.target.value })}
+                  className="w-full bg-black border border-zinc-800 p-3 text-white text-sm outline-none focus:border-red-600"
+                >
+                  <option value="all">All Leads</option>
+                  <option value="new">New Only</option>
+                  <option value="contacted">Engaged Only</option>
+                  <option value="resolved">Archived Only</option>
+                </select>
+              </div>
+            </div>
+            <div className="mt-4 text-[10px] text-zinc-600 font-technical uppercase">
+              Showing {filteredLeads.length} of {leads.length} leads
+            </div>
+          </div>
+        )}
+
+        {tab === 'ops' && (
+          <div className="mb-8 bg-zinc-950 border border-zinc-900 p-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="text-[10px] font-technical text-zinc-600 uppercase mb-2 block">Search</label>
+                <input
+                  type="text"
+                  placeholder="Car, issue, solution..."
+                  value={opsFilter.search}
+                  onChange={(e) => setOpsFilter({ ...opsFilter, search: e.target.value })}
+                  className="w-full bg-black border border-zinc-800 p-3 text-white text-sm outline-none focus:border-red-600"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-technical text-zinc-600 uppercase mb-2 block">Profit/Loss</label>
+                <select
+                  value={opsFilter.profitFilter}
+                  onChange={(e) => setOpsFilter({ ...opsFilter, profitFilter: e.target.value })}
+                  className="w-full bg-black border border-zinc-800 p-3 text-white text-sm outline-none focus:border-red-600"
+                >
+                  <option value="all">All Operations</option>
+                  <option value="profit">Profitable Only</option>
+                  <option value="loss">Loss/Break-even</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-[10px] font-technical text-zinc-600 uppercase mb-2 block">Date Range</label>
+                <select
+                  value={opsFilter.dateRange}
+                  onChange={(e) => setOpsFilter({ ...opsFilter, dateRange: e.target.value })}
+                  className="w-full bg-black border border-zinc-800 p-3 text-white text-sm outline-none focus:border-red-600"
+                >
+                  <option value="all">All Time</option>
+                  <option value="week">Last 7 Days</option>
+                  <option value="month">Last 30 Days</option>
+                  <option value="quarter">Last 90 Days</option>
+                </select>
+              </div>
+            </div>
+            <div className="mt-4 text-[10px] text-zinc-600 font-technical uppercase">
+              Showing {filteredHistory.length} of {history.length} operations
+            </div>
+          </div>
+        )}
+
         <div className="bg-zinc-950 border border-zinc-900 overflow-hidden shadow-2xl">
           {tab === 'leads' ? (
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead><tr className="bg-zinc-900 text-[10px] font-technical uppercase text-zinc-500 tracking-widest"><th className="p-8">Client</th><th className="p-8">Car</th><th className="p-8">Status</th><th className="p-8 text-right">Action</th></tr></thead>
                 <tbody className="divide-y divide-zinc-900">
-                  {leads.map(lead => (
+                  {filteredLeads.map(lead => (
                     <tr key={lead._id} className="hover:bg-zinc-900/50">
                       <td className="p-8"><div className="font-bold text-white uppercase">{lead.name}</div><div className="text-zinc-600 text-[10px]">{lead.phone}</div></td>
                       <td className="p-8 text-zinc-400 text-xs">{lead.car}</td>
@@ -247,11 +364,11 @@ const AdminDashboard: React.FC<{
               <table className="w-full text-left">
                 <thead><tr className="bg-zinc-900 text-[10px] font-technical uppercase text-zinc-500 tracking-widest"><th className="p-8">Date</th><th className="p-8">Vehicle</th><th className="p-8">Protocol</th><th className="p-8">Economics</th><th className="p-8 text-right">Action</th></tr></thead>
                 <tbody className="divide-y divide-zinc-900">
-                  {history.map(h => (
+                  {filteredHistory.map(h => (
                     <tr key={h._id} className="hover:bg-zinc-900/50">
                       <td className="p-8 text-xs font-technical text-zinc-600">{h.date}</td>
                       <td className="p-8 font-black uppercase text-white tracking-tighter">{h.car}</td>
-                      <td className="p-8 text-zinc-400 text-xs italic">{h.issue} -> {h.solution}</td>
+                      <td className="p-8 text-zinc-400 text-xs italic">{h.issue} → {h.solution}</td>
                       <td className="p-8 text-red-600 font-black text-lg">{(h.revenue - h.cost).toLocaleString()}€</td>
                       <td className="p-8 text-right"><button onClick={async () => { if(confirm('Delete record?')) { await api.deleteRecord(h._id!, token); fetchData(); } }} className="text-zinc-800 hover:text-red-600 transition-colors"><Trash2 size={16}/></button></td>
                     </tr>
@@ -270,19 +387,31 @@ const AdminDashboard: React.FC<{
 
 const ServiceCard: React.FC<{ service: Service, index: number, lang: Language }> = ({ service, index, lang }) => {
   const t = translations[lang];
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 30 }} 
-      whileInView={{ opacity: 1, y: 0 }} 
-      viewport={{ once: true }} 
-      transition={{ delay: index * 0.05 }} 
-      className="group bg-[#0c0c0c] p-12 hover:border-red-600/40 border border-transparent transition-all flex flex-col h-full relative"
+    <motion.div
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{
+        duration: 0.5,
+        ease: "easeOut"
+      }}
+      className="group bg-[#0c0c0c] p-6 sm:p-10 lg:p-12 hover:border-red-600/40 border border-transparent transition-all flex flex-col h-full relative"
     >
-      <div className="text-red-600 mb-10 transform group-hover:scale-110 transition-transform origin-left">{ICON_MAP[service.icon]}</div>
-      <h3 className="text-2xl font-black text-white uppercase mb-4 tracking-tighter group-hover:text-red-500 transition-colors">{service.title}</h3>
-      <p className="text-zinc-500 mb-10 text-sm flex-grow leading-relaxed">{service.shortDesc}</p>
-      <a href={`#service-${service.id}`} className="inline-flex items-center text-white font-bold uppercase text-[10px] tracking-[0.4em] group-hover:text-red-500 transition-colors">
-        {t.full_protocol} <ChevronRight size={14} className="ml-2 group-hover:translate-x-1 transition-transform" />
+      <div className="text-red-600 mb-4 sm:mb-6 lg:mb-10 transform group-hover:scale-110 transition-transform origin-left">{ICON_MAP[service.icon]}</div>
+      <h3 className="text-sm sm:text-lg lg:text-2xl font-black text-white uppercase mb-2 sm:mb-3 lg:mb-4 tracking-tighter group-hover:text-red-500 transition-colors leading-tight">{service.title}</h3>
+      <p className="text-zinc-500 mb-4 sm:mb-6 lg:mb-10 text-xs sm:text-sm flex-grow leading-relaxed">{service.shortDesc}</p>
+      <a href={`#service-${service.id}`} className="inline-flex items-center text-white font-bold uppercase text-[8px] sm:text-[10px] tracking-[0.3em] sm:tracking-[0.4em] group-hover:text-red-500 transition-colors">
+        <span className="hidden sm:inline">{t.full_protocol}</span><span className="sm:hidden">Details</span> <ChevronRight size={12} className="ml-1 sm:ml-2 group-hover:translate-x-1 transition-transform" />
       </a>
     </motion.div>
   );
@@ -297,7 +426,7 @@ const DetailedService: React.FC<{ service: Service, reverse?: boolean }> = ({ se
           <div className="absolute inset-0 border-[20px] border-black/40 pointer-events-none group-hover:border-[10px] transition-all duration-500"></div>
         </motion.div>
         <div>
-          <h2 className="text-5xl font-black text-white uppercase mb-8 tracking-tighter leading-none">{service.title}</h2>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white uppercase mb-8 tracking-tighter leading-none">{service.title}</h2>
           <p className="text-xl text-zinc-400 mb-12 font-light leading-relaxed">{service.fullDesc}</p>
           <div className="grid sm:grid-cols-2 gap-8">
             <div className="p-8 bg-zinc-950 border border-zinc-900 border-l-red-600">
@@ -319,13 +448,12 @@ const DetailedService: React.FC<{ service: Service, reverse?: boolean }> = ({ se
 
 export default function App() {
   const [lang, setLang] = useState<Language>('en');
-  const [logo, setLogo] = useState<string | null>(() => localStorage.getItem('kg_logo'));
+  const logo = '/KC_garage.jpg'; // Static logo path
   const [view, setView] = useState<'main' | 'admin'>(window.location.pathname === '/admin' ? 'admin' : 'main');
   const [token, setToken] = useState<string | null>(sessionStorage.getItem('kg_token'));
   const [loginPass, setLoginPass] = useState('');
   const [loginError, setLoginError] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
 
   const t = translations[lang];
 
@@ -353,27 +481,6 @@ export default function App() {
     window.location.href = '/';
   };
 
-  const generateLogo = useCallback(async () => {
-    try {
-      if (isGenerating) return;
-      setIsGenerating(true);
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-pro-image-preview',
-        contents: { parts: [{ text: "Minimalist ultra-premium automotive garage logo for 'Kërçishta Garage'. Sharp silver and deep crimson accents." }] },
-        config: { imageConfig: { aspectRatio: "1:1", imageSize: "1K" } }
-      });
-      for (const part of response.candidates[0].content.parts) {
-        if (part.inlineData) {
-          const data = `data:image/png;base64,${part.inlineData.data}`;
-          setLogo(data);
-          localStorage.setItem('kg_logo', data);
-          break;
-        }
-      }
-    } catch (e) { console.error(e); } finally { setIsGenerating(false); }
-  }, [isGenerating]);
-
   return (
     <div className="bg-[#050505] text-[#f4f4f4] min-h-screen selection:bg-red-600">
       <ScrollProgress />
@@ -386,7 +493,7 @@ export default function App() {
             
             {/* Real Stats Overview */}
             <section className="bg-black py-20 border-y border-zinc-900">
-              <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 lg:grid-cols-4 gap-12">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-12">
                 {[
                   { label: t.stats_jobs, value: '12,500+' },
                   { label: t.stats_uptime, value: '99.8%' },
@@ -394,8 +501,8 @@ export default function App() {
                   { label: t.stats_techs, value: '8 Certified' },
                 ].map((stat, i) => (
                   <div key={i} className="text-center lg:text-left">
-                    <p className="text-zinc-600 font-technical text-[10px] uppercase tracking-[0.4em] mb-2">{stat.label}</p>
-                    <p className="text-4xl font-black text-white uppercase">{stat.value}</p>
+                    <p className="text-zinc-600 font-technical text-[8px] sm:text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.4em] mb-2">{stat.label}</p>
+                    <p className="text-2xl sm:text-3xl lg:text-4xl font-black text-white uppercase break-words">{stat.value}</p>
                   </div>
                 ))}
               </div>
@@ -407,11 +514,11 @@ export default function App() {
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-24 gap-12">
                   <div className="max-w-2xl">
                     <span className="text-red-600 font-technical text-xs font-black uppercase tracking-[0.5em] block mb-6">{t.services_title}</span>
-                    <h2 className="text-6xl font-black text-white uppercase tracking-tighter leading-none">Advanced <br /><span className="text-red-600">Expertise</span></h2>
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white uppercase tracking-tighter leading-none">Advanced <br /><span className="text-red-600">Expertise</span></h2>
                   </div>
                   <p className="text-zinc-500 max-w-sm font-light text-xl leading-relaxed italic border-l-2 border-zinc-800 pl-8">{t.services_subtitle}</p>
                 </div>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-px bg-zinc-900 border border-zinc-900 shadow-2xl">
+                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-px bg-zinc-900 border border-zinc-900 shadow-2xl">
                   {SERVICES.map((service, i) => (
                     <ServiceCard key={service.id} service={service} index={i} lang={lang} />
                   ))}
@@ -429,15 +536,27 @@ export default function App() {
             <section id="booking" className="py-32 bg-[#050505]">
               <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-32">
                 <div>
-                  <h2 className="text-7xl font-black text-white uppercase mb-10 tracking-tighter">{t.booking_title}</h2>
+                  <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white uppercase mb-10 tracking-tighter">{t.booking_title}</h2>
                   <p className="text-xl text-zinc-500 mb-16 font-light leading-relaxed">{t.booking_sub}</p>
                   <div className="flex group mb-12 items-center">
                     <div className="w-16 h-16 bg-zinc-900 flex items-center justify-center mr-8 group-hover:border-red-600 transition-colors"><Phone className="text-red-600" size={28}/></div>
                     <p className="text-4xl font-black group-hover:text-red-600 transition-colors">+49 731 123 4567</p>
                   </div>
-                  <div className="flex group items-center">
+                  <div className="flex group items-center mb-12">
                     <div className="w-16 h-16 bg-zinc-900 flex items-center justify-center mr-8 group-hover:border-red-600 transition-colors"><MapPin className="text-red-600" size={28}/></div>
                     <p className="text-xl font-bold uppercase tracking-widest text-zinc-400 group-hover:text-white transition-colors">Dieselstraße 42, 89231 Neu-Ulm</p>
+                  </div>
+                  <div className="w-full h-64 bg-zinc-950 border border-zinc-900 overflow-hidden shadow-2xl">
+                    <iframe
+                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2649.8!2d10.0052!3d48.3857!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x479967b7c0c0c0c0%3A0x0!2sDieselstra%C3%9Fe%2042%2C%2089231%20Neu-Ulm%2C%20Germany!5e0!3m2!1sen!2sus!4v1234567890"
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0 }}
+                      allowFullScreen
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      title="Kërçishta Garage Location"
+                    />
                   </div>
                 </div>
 
@@ -483,7 +602,7 @@ export default function App() {
           <div className="grid md:grid-cols-4 gap-20 mb-32">
             <div className="col-span-2">
               <div className="flex items-center space-x-3 mb-10">
-                {logo ? <img src={logo} className="w-12 h-12 object-contain" /> : <div className="w-10 h-10 bg-red-600 flex items-center justify-center font-bold">K</div>}
+                <img src={logo} alt="Kërçishta Garage Logo" className="w-12 h-12 object-contain" />
                 <span className="font-extrabold text-2xl uppercase">Kërçishta<span className="text-red-600">Garage</span></span>
               </div>
               <p className="text-zinc-500 max-w-sm mb-12 font-light leading-relaxed">{t.footer_desc}</p>
@@ -504,7 +623,6 @@ export default function App() {
             <div>
                <h4 className="text-white font-black uppercase text-xs mb-10 tracking-[0.4em]">Operational Node</h4>
                <p className="text-zinc-700 text-[10px] font-technical uppercase leading-loose tracking-widest">Dieselstraße 42, 89231 Neu-Ulm, Germany</p>
-               {!logo && <button onClick={generateLogo} className="mt-8 text-[10px] font-technical text-red-600/30 hover:text-red-600 transition-colors uppercase">Initiate Branding Sequence</button>}
             </div>
           </div>
           <div className="pt-16 border-t border-zinc-900 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-technical uppercase text-zinc-800 tracking-[0.4em]">
@@ -558,17 +676,17 @@ const PricingSection: React.FC<{ lang: Language }> = ({ lang }) => {
       <div className="max-w-7xl mx-auto px-6">
         <div className="max-w-2xl mb-24">
           <span className="text-red-600 font-technical text-xs font-black uppercase tracking-[0.5em] block mb-6">{t.nav_pricing}</span>
-          <h2 className="text-6xl font-black text-white uppercase tracking-tighter leading-none mb-6">{t.pricing_title}</h2>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white uppercase tracking-tighter leading-none mb-6">{t.pricing_title}</h2>
           <p className="text-zinc-500 font-light leading-relaxed">{t.pricing_sub}</p>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-zinc-900 border border-zinc-900">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-px bg-zinc-900 border border-zinc-900">
           {items.map((item, i) => (
-            <div key={i} className="p-12 bg-black hover:bg-zinc-950 transition-all group cursor-default">
-              <div className="text-zinc-800 mb-8 group-hover:text-red-600 transition-colors duration-500">{item.icon}</div>
-              <h4 className="text-zinc-400 font-bold uppercase text-xs tracking-[0.2em] mb-4 group-hover:text-white transition-colors">{item.name}</h4>
-              <div className="flex items-baseline space-x-2">
-                <span className="text-white text-5xl font-black">{item.price}</span>
-                <span className="text-red-600 font-black text-2xl group-hover:translate-x-1 transition-transform inline-block">€</span>
+            <div key={i} className="p-8 sm:p-12 bg-black hover:bg-zinc-950 transition-all group cursor-default flex flex-col items-center text-center">
+              <div className="text-zinc-800 mb-6 sm:mb-8 group-hover:text-red-600 transition-colors duration-500">{item.icon}</div>
+              <h4 className="text-zinc-400 font-bold uppercase text-[10px] sm:text-xs tracking-[0.2em] mb-4 group-hover:text-white transition-colors">{item.name}</h4>
+              <div className="flex items-baseline justify-center space-x-2">
+                <span className="text-white text-4xl sm:text-5xl font-black">{item.price}</span>
+                <span className="text-red-600 font-black text-xl sm:text-2xl group-hover:translate-x-1 transition-transform inline-block">€</span>
               </div>
             </div>
           ))}
