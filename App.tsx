@@ -796,6 +796,10 @@ const PricingSection: React.FC<{ lang: Language }> = ({ lang }) => {
       title: lang === 'en' ? 'Equipment Rental' : 'Gerätevermietung',
       items: [
         { name: t.pricing_lift, price: "20" },
+        { name: t.pricing_tool_cart, price: "10" },
+        { name: t.pricing_special_tools, price: "15" },
+        { name: t.pricing_welder, price: "25" },
+        { name: t.pricing_oil_disposal, price: "10" },
       ]
     },
   ];
