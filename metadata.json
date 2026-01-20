@@ -1,0 +1,7 @@
+{
+  "name": "Kërçishta Garage",
+  "description": "High-end, rugged automotive service website for Kërçishta Garage in Ulm, Germany, featuring mechanical repairs, diagnostics, and modern technical aesthetics.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
