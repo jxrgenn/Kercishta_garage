@@ -498,18 +498,20 @@ export default function App() {
             
             {/* Real Stats Overview */}
             <section className="bg-black py-20 border-y border-zinc-900">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-12">
-                {[
-                  { label: 'Opening Hours', value: 'Mo-Sa 07:00-16:00' },
-                  { label: 'Years in Business', value: '4+' },
-                  { label: 'Equipment Rental', value: 'Available' },
-                  { label: 'Services Offered', value: '4+' },
-                ].map((stat, i) => (
-                  <div key={i} className="text-center lg:text-left">
-                    <p className="text-zinc-600 font-technical text-[8px] sm:text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.4em] mb-2">{stat.label}</p>
-                    <p className="text-xl sm:text-2xl lg:text-3xl font-black text-white uppercase break-words">{stat.value}</p>
-                  </div>
-                ))}
+              <div className="max-w-7xl mx-auto px-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
+                  {[
+                    { label: 'Opening Hours', value: 'Mo-Sa 07:00-16:00' },
+                    { label: 'Years in Business', value: '4+' },
+                    { label: 'Equipment Rental', value: 'Available' },
+                    { label: 'Services Offered', value: '4+' },
+                  ].map((stat, i) => (
+                    <div key={i} className="text-center lg:text-left">
+                      <p className="text-zinc-600 font-technical text-[10px] uppercase tracking-[0.4em] mb-3">{stat.label}</p>
+                      <p className="text-2xl lg:text-3xl font-black text-white uppercase">{stat.value}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </section>
             
@@ -684,10 +686,10 @@ const Hero: React.FC<{ lang: Language }> = ({ lang }) => {
 const PricingSection: React.FC<{ lang: Language }> = ({ lang }) => {
   const t = translations[lang];
   const items = [
-    { name: lang === 'en' ? "Diagnostic Scan" : "Fehler Auslesen", price: "20", icon: <Activity size={20}/> },
-    { name: lang === 'en' ? "Wheel Change" : "Räderwechsel", price: "20", icon: <Wrench size={20}/> },
-    { name: lang === 'en' ? "Tire Change (16\")" : "Reifenwechsel (bis 16\")", price: "60", icon: <Wrench size={20}/> },
-    { name: lang === 'en' ? "Lift Rental (Hour)" : "Hebebühne (Stunde)", price: "20", icon: <CarFront size={20}/> },
+    { name: lang === 'en' ? "Diagnostic Scan" : "Fehler Auslesen", price: "20", icon: <Activity size={24}/> },
+    { name: lang === 'en' ? "Wheel Change" : "Räderwechsel", price: "20", icon: <Wrench size={24}/> },
+    { name: lang === 'en' ? "Tire Change (16\")" : "Reifenwechsel (bis 16\")", price: "60", icon: <Wrench size={24}/> },
+    { name: lang === 'en' ? "Lift Rental (Hour)" : "Hebebühne (Stunde)", price: "20", icon: <CarFront size={24}/> },
   ];
   return (
     <section id="pricing" className="py-32 bg-[#080808] border-y border-zinc-900">
@@ -697,14 +699,14 @@ const PricingSection: React.FC<{ lang: Language }> = ({ lang }) => {
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white uppercase tracking-tighter leading-none mb-6">{t.pricing_title}</h2>
           <p className="text-zinc-500 font-light leading-relaxed">{t.pricing_sub}</p>
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-px bg-zinc-900 border border-zinc-900">
+        <div className="grid grid-cols-2 lg:grid-cols-2 gap-px bg-zinc-900 border border-zinc-900">
           {items.map((item, i) => (
-            <div key={i} className="p-8 sm:p-12 bg-black hover:bg-zinc-950 transition-all group cursor-default flex flex-col items-center text-center">
-              <div className="text-zinc-800 mb-6 sm:mb-8 group-hover:text-red-600 transition-colors duration-500">{item.icon}</div>
-              <h4 className="text-zinc-400 font-bold uppercase text-[10px] sm:text-xs tracking-[0.2em] mb-4 group-hover:text-white transition-colors">{item.name}</h4>
+            <div key={i} className="p-10 sm:p-16 bg-black hover:bg-zinc-950 transition-all group cursor-default flex flex-col items-center text-center">
+              <div className="text-zinc-800 mb-8 group-hover:text-red-600 transition-colors duration-500">{item.icon}</div>
+              <h4 className="text-zinc-400 font-bold uppercase text-xs sm:text-sm tracking-[0.2em] mb-6 group-hover:text-white transition-colors">{item.name}</h4>
               <div className="flex items-baseline justify-center space-x-2">
-                <span className="text-white text-4xl sm:text-5xl font-black">{item.price}</span>
-                <span className="text-red-600 font-black text-xl sm:text-2xl group-hover:translate-x-1 transition-transform inline-block">€</span>
+                <span className="text-white text-5xl sm:text-6xl font-black">{item.price}</span>
+                <span className="text-red-600 font-black text-2xl sm:text-3xl group-hover:translate-x-1 transition-transform inline-block">€</span>
               </div>
             </div>
           ))}
