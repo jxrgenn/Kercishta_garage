@@ -575,16 +575,19 @@ export default function App() {
             <section className="bg-black py-20 border-y border-zinc-900">
               <div className="max-w-7xl mx-auto px-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
+                  <div className="text-center">
+                    <p className="text-zinc-600 font-technical text-sm uppercase tracking-[0.3em] mb-4">{t.stats_opening_hours}</p>
+                    <p className="text-4xl lg:text-5xl font-black text-white uppercase leading-tight">MO-SA</p>
+                    <p className="text-4xl lg:text-5xl font-black text-white uppercase leading-tight">07:00-16:00</p>
+                  </div>
                   {[
-                    { label: t.stats_opening_hours, value: 'Mo-Sa', subtitle: '07:00-16:00' },
                     { label: t.stats_years, value: '4+' },
                     { label: t.stats_equipment, value: lang === 'en' ? 'Available' : 'Verfügbar' },
                     { label: t.stats_services, value: '4+' },
                   ].map((stat, i) => (
                     <div key={i} className="text-center">
-                      <p className="text-zinc-600 font-technical text-xs uppercase tracking-[0.3em] mb-4">{stat.label}</p>
+                      <p className="text-zinc-600 font-technical text-sm uppercase tracking-[0.3em] mb-4">{stat.label}</p>
                       <p className="text-4xl lg:text-5xl font-black text-white uppercase">{stat.value}</p>
-                      {stat.subtitle && <p className="text-4xl lg:text-5xl font-black text-white uppercase mt-2">{stat.subtitle}</p>}
                     </div>
                   ))}
                 </div>
@@ -623,7 +626,7 @@ export default function App() {
                   <p className="text-xl text-zinc-500 mb-16 font-light leading-relaxed">{t.booking_sub}</p>
                   <div className="flex group mb-12 items-center">
                     <div className="w-16 h-16 bg-zinc-900 flex items-center justify-center mr-8 group-hover:border-red-600 transition-colors"><Phone className="text-red-600" size={28}/></div>
-                    <p className="text-3xl sm:text-4xl font-black group-hover:text-red-600 transition-colors">+49 157 38173920</p>
+                    <p className="text-xl sm:text-2xl font-black group-hover:text-red-600 transition-colors">+49 157 38173920</p>
                   </div>
                   <div className="flex group items-center mb-12">
                     <div className="w-16 h-16 bg-zinc-900 flex items-center justify-center mr-8 group-hover:border-red-600 transition-colors"><MapPin className="text-red-600" size={28}/></div>
@@ -720,9 +723,9 @@ export default function App() {
                <p className="text-zinc-700 text-[10px] font-technical uppercase leading-loose tracking-widest">Böttgerstraße 7, 89321 Neu-Ulm, Germany</p>
             </div>
           </div>
-          <div className="pt-16 border-t border-zinc-900 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-technical uppercase text-zinc-800 tracking-[0.4em]">
+          <div className="pt-16 border-t border-zinc-900 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-technical uppercase text-zinc-600 tracking-[0.4em]">
             <p>© {new Date().getFullYear()} Kërçishta Garage Engineering. All systems active.</p>
-            <p className="flex items-center">{t.made_by} <a href="https://jxsoft.al" target="_blank" className="text-zinc-600 hover:text-red-600 font-bold ml-2 transition-colors">jxsoft.al</a></p>
+            <p className="flex items-center">{t.made_by} <a href="https://jxsoft.al" target="_blank" className="text-zinc-500 hover:text-red-600 font-bold ml-2 transition-colors">jxsoft.al</a></p>
           </div>
         </div>
       </footer>
