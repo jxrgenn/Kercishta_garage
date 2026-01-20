@@ -3,10 +3,10 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion';
 import {
   Phone, Mail, MapPin, Clock, ArrowRight, ChevronRight, CheckCircle2, Menu, X,
-  Instagram, Facebook, Linkedin, Monitor, Wrench, ShieldCheck, TrendingUp,
+  Instagram, Facebook, Linkedin,
   Languages, Loader2, Lock, LayoutDashboard, History, UserCheck, Plus, Search,
   LogOut, Euro, FileText, Trash2, BarChart3, Calendar, Activity, Droplets,
-  Disc, Gauge, Wind, Target, Cpu, ChevronUp
+  CarFront, Sparkles
 } from 'lucide-react';
 import { SERVICES, ICON_MAP } from './constants';
 import { Service } from './types';
@@ -498,10 +498,10 @@ export default function App() {
             <section className="bg-black py-20 border-y border-zinc-900">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-12">
                 {[
-                  { label: t.stats_jobs, value: '12,500+' },
-                  { label: t.stats_uptime, value: '99.8%' },
-                  { label: t.stats_parts, value: t.stats_oem },
-                  { label: t.stats_techs, value: '8 Certified' },
+                  { label: 'Opening Hours', value: 'Mon-Sat' },
+                  { label: 'Years in Business', value: '4+' },
+                  { label: 'Bridge Rental', value: 'Available' },
+                  { label: 'Services Offered', value: '4+' },
                 ].map((stat, i) => (
                   <div key={i} className="text-center lg:text-left">
                     <p className="text-zinc-600 font-technical text-[8px] sm:text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.4em] mb-2">{stat.label}</p>
@@ -642,8 +642,25 @@ const Hero: React.FC<{ lang: Language }> = ({ lang }) => {
   const t = translations[lang];
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#050505]">
+      {/* Animated Gradient Background */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-red-600/10 via-pink-500/5 to-zinc-900/10 animate-[gradient_8s_ease_infinite]"
+             style={{
+               backgroundSize: '400% 400%',
+               animation: 'gradient 15s ease infinite'
+             }}></div>
+        <style>{`
+          @keyframes gradient {
+            0%, 100% {
+              background-position: 0% 50%;
+            }
+            50% {
+              background-position: 100% 50%;
+            }
+          }
+        `}</style>
+      </div>
       <div className="absolute inset-0 z-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px)', backgroundSize: '80px 80px' }}></div>
-      <div className="absolute top-0 right-0 w-[60%] h-full bg-red-600/5 blur-[120px] rounded-full pointer-events-none"></div>
       <div className="relative z-10 max-w-7xl mx-auto px-6 w-full text-center">
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2 }}>
           <div className="inline-flex items-center space-x-3 px-6 py-2 bg-zinc-900/80 border border-zinc-800 rounded-full mb-10 shadow-2xl">
@@ -667,12 +684,10 @@ const Hero: React.FC<{ lang: Language }> = ({ lang }) => {
 const PricingSection: React.FC<{ lang: Language }> = ({ lang }) => {
   const t = translations[lang];
   const items = [
-    { name: lang === 'en' ? "Full Diagnostics" : "Komplette Diagnose", price: "99", icon: <Monitor size={20}/> },
-    { name: lang === 'en' ? "Standard Service" : "Standard-Service", price: "189", icon: <Droplets size={20}/> },
-    { name: lang === 'en' ? "Brake Overhaul" : "Bremsenservice", price: "120", icon: <Disc size={20}/> },
-    { name: lang === 'en' ? "Stage 1 Tuning" : "Stufe 1 Tuning", price: "450", icon: <Gauge size={20}/> },
-    { name: lang === 'en' ? "AC Recharge" : "Klima-Service", price: "79", icon: <Wind size={20}/> },
-    { name: lang === 'en' ? "Laser Alignment" : "Achsvermessung", price: "85", icon: <Target size={20}/> },
+    { name: lang === 'en' ? "Diagnostic Scan" : "Diagnose-Scan", price: "89", icon: <Activity size={20}/> },
+    { name: lang === 'en' ? "Oil & Service" : "Öl & Service", price: "149", icon: <Droplets size={20}/> },
+    { name: lang === 'en' ? "Bridge Rental (Day)" : "Brückenmiete (Tag)", price: "45", icon: <CarFront size={20}/> },
+    { name: lang === 'en' ? "Detailing Package" : "Detailing-Paket", price: "199", icon: <Sparkles size={20}/> },
   ];
   return (
     <section id="pricing" className="py-32 bg-[#080808] border-y border-zinc-900">
