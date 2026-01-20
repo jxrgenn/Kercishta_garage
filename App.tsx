@@ -501,10 +501,10 @@ export default function App() {
               <div className="max-w-7xl mx-auto px-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
                   {[
-                    { label: 'Opening Hours', value: 'Mo-Sa 07:00-16:00' },
-                    { label: 'Years in Business', value: '4+' },
-                    { label: 'Equipment Rental', value: 'Available' },
-                    { label: 'Services Offered', value: '4+' },
+                    { label: t.stats_opening_hours, value: 'Mo-Sa 07:00-16:00' },
+                    { label: t.stats_years, value: '4+' },
+                    { label: t.stats_equipment, value: lang === 'en' ? 'Available' : 'Verfügbar' },
+                    { label: t.stats_services, value: '4+' },
                   ].map((stat, i) => (
                     <div key={i} className="text-center lg:text-left">
                       <p className="text-zinc-600 font-technical text-[10px] uppercase tracking-[0.4em] mb-3">{stat.label}</p>
@@ -521,7 +521,7 @@ export default function App() {
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-24 gap-12">
                   <div className="max-w-2xl">
                     <span className="text-red-600 font-technical text-xs font-black uppercase tracking-[0.5em] block mb-6">{t.services_title}</span>
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white uppercase tracking-tighter leading-none">Advanced <br /><span className="text-red-600">Expertise</span></h2>
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white uppercase tracking-tighter leading-none">{t.services_header} <br /><span className="text-red-600">{t.services_header_red}</span></h2>
                   </div>
                   <p className="text-zinc-500 max-w-sm font-light text-xl leading-relaxed italic border-l-2 border-zinc-800 pl-8">{t.services_subtitle}</p>
                 </div>
@@ -533,12 +533,12 @@ export default function App() {
               </div>
             </section>
 
-            <PricingSection lang={lang} />
-
             {/* RESTORED: Deep Service Protocols */}
             {SERVICES.slice(0, 4).map((s, i) => (
               <DetailedService key={s.id} service={s} reverse={i % 2 !== 0} />
             ))}
+
+            <PricingSection lang={lang} />
 
             <section id="booking" className="py-32 bg-[#050505]">
               <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-32">
@@ -574,22 +574,22 @@ export default function App() {
                   ) : (
                     <form onSubmit={async (e) => { e.preventDefault(); const fd = new FormData(e.currentTarget as HTMLFormElement); await api.submitLead(Object.fromEntries(fd)); setSubmitted(true); }} className="space-y-8">
                       <div>
-                        <label className="text-[10px] font-technical text-zinc-600 uppercase mb-2 block tracking-[0.2em]">Full Name</label>
-                        <input name="name" required placeholder="NAME" className="w-full bg-black border border-zinc-800 p-5 text-white outline-none focus:border-red-600 transition-all" />
+                        <label className="text-[10px] font-technical text-zinc-600 uppercase mb-2 block tracking-[0.2em]">{t.form_name}</label>
+                        <input name="name" required placeholder={t.form_placeholder_name} className="w-full bg-black border border-zinc-800 p-5 text-white outline-none focus:border-red-600 transition-all" />
                       </div>
                       <div>
-                        <label className="text-[10px] font-technical text-zinc-600 uppercase mb-2 block tracking-[0.2em]">Phone Number</label>
-                        <input name="phone" required placeholder="PHONE" className="w-full bg-black border border-zinc-800 p-5 text-white outline-none focus:border-red-600 transition-all" />
+                        <label className="text-[10px] font-technical text-zinc-600 uppercase mb-2 block tracking-[0.2em]">{t.form_phone}</label>
+                        <input name="phone" required placeholder={t.form_placeholder_phone} className="w-full bg-black border border-zinc-800 p-5 text-white outline-none focus:border-red-600 transition-all" />
                       </div>
                       <div>
-                        <label className="text-[10px] font-technical text-zinc-600 uppercase mb-2 block tracking-[0.2em]">Vehicle</label>
-                        <input name="car" required placeholder="CAR (MODEL/YEAR)" className="w-full bg-black border border-zinc-800 p-5 text-white outline-none focus:border-red-600 transition-all" />
+                        <label className="text-[10px] font-technical text-zinc-600 uppercase mb-2 block tracking-[0.2em]">{t.form_vehicle}</label>
+                        <input name="car" required placeholder={t.form_placeholder_car} className="w-full bg-black border border-zinc-800 p-5 text-white outline-none focus:border-red-600 transition-all" />
                       </div>
                       <div>
-                        <label className="text-[10px] font-technical text-zinc-600 uppercase mb-2 block tracking-[0.2em]">Issue Description</label>
-                        <textarea name="issue" rows={4} className="w-full bg-black border border-zinc-800 p-5 text-white outline-none focus:border-red-600 transition-all" placeholder="DESCRIBE THE ISSUE"></textarea>
+                        <label className="text-[10px] font-technical text-zinc-600 uppercase mb-2 block tracking-[0.2em]">{t.form_issue}</label>
+                        <textarea name="issue" rows={4} className="w-full bg-black border border-zinc-800 p-5 text-white outline-none focus:border-red-600 transition-all" placeholder={t.form_placeholder_issue}></textarea>
                       </div>
-                      <button type="submit" className="w-full bg-red-600 text-white p-6 font-black uppercase text-xl shadow-xl hover:bg-white hover:text-black transition-all">Submit Protocol</button>
+                      <button type="submit" className="w-full bg-red-600 text-white p-6 font-black uppercase text-xl shadow-xl hover:bg-white hover:text-black transition-all">{t.form_submit}</button>
                     </form>
                   )}
                 </div>
@@ -632,15 +632,15 @@ export default function App() {
               </div>
             </div>
             <div>
-              <h4 className="text-white font-black uppercase text-xs mb-10 tracking-[0.4em]">Index</h4>
+              <h4 className="text-white font-black uppercase text-xs mb-10 tracking-[0.4em]">{t.footer_index}</h4>
               <ul className="space-y-6 text-[10px] uppercase font-technical tracking-widest">
-                <li><a href="#services" className="text-zinc-600 hover:text-red-600 transition-colors">Services</a></li>
-                <li><a href="#pricing" className="text-zinc-600 hover:text-red-600 transition-colors">Pricing</a></li>
-                <li><a href="#booking" className="text-zinc-600 hover:text-red-600 transition-colors">Booking</a></li>
+                <li><a href="#services" className="text-zinc-600 hover:text-red-600 transition-colors">{t.footer_services}</a></li>
+                <li><a href="#pricing" className="text-zinc-600 hover:text-red-600 transition-colors">{t.footer_pricing}</a></li>
+                <li><a href="#booking" className="text-zinc-600 hover:text-red-600 transition-colors">{t.footer_booking}</a></li>
               </ul>
             </div>
             <div>
-               <h4 className="text-white font-black uppercase text-xs mb-10 tracking-[0.4em]">Operational Node</h4>
+               <h4 className="text-white font-black uppercase text-xs mb-10 tracking-[0.4em]">{t.footer_node}</h4>
                <p className="text-zinc-700 text-[10px] font-technical uppercase leading-loose tracking-widest">Böttgerstraße 7, 89321 Neu-Ulm, Germany</p>
             </div>
           </div>
@@ -686,10 +686,10 @@ const Hero: React.FC<{ lang: Language }> = ({ lang }) => {
 const PricingSection: React.FC<{ lang: Language }> = ({ lang }) => {
   const t = translations[lang];
   const items = [
-    { name: lang === 'en' ? "Diagnostic Scan" : "Fehler Auslesen", price: "20", icon: <Activity size={24}/> },
-    { name: lang === 'en' ? "Wheel Change" : "Räderwechsel", price: "20", icon: <Wrench size={24}/> },
-    { name: lang === 'en' ? "Tire Change (16\")" : "Reifenwechsel (bis 16\")", price: "60", icon: <Wrench size={24}/> },
-    { name: lang === 'en' ? "Lift Rental (Hour)" : "Hebebühne (Stunde)", price: "20", icon: <CarFront size={24}/> },
+    { name: t.pricing_diagnostic, price: "20", icon: <Activity size={24}/> },
+    { name: t.pricing_wheel, price: "20", icon: <Wrench size={24}/> },
+    { name: t.pricing_tire, price: "60", icon: <Wrench size={24}/> },
+    { name: t.pricing_lift, price: "20", icon: <CarFront size={24}/> },
   ];
   return (
     <section id="pricing" className="py-32 bg-[#080808] border-y border-zinc-900">
