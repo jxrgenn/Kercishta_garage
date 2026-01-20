@@ -481,13 +481,13 @@ const ServiceCard: React.FC<{ service: Service, index: number, lang: Language }>
         duration: 0.5,
         ease: "easeOut"
       }}
-      className="group bg-[#0c0c0c] p-6 sm:p-10 lg:p-12 hover:border-red-600/40 border border-transparent transition-all flex flex-col h-full relative"
+      className="group bg-[#0c0c0c] p-8 hover:border-red-600/40 border border-transparent transition-all flex flex-col h-full relative"
     >
-      <div className="text-red-600 mb-4 sm:mb-6 lg:mb-10 transform group-hover:scale-110 transition-transform origin-left">{ICON_MAP[service.icon]}</div>
-      <h3 className="text-sm sm:text-lg lg:text-xl font-black text-white uppercase mb-2 sm:mb-3 lg:mb-4 tracking-tighter group-hover:text-red-500 transition-colors leading-tight">{translatedService.title}</h3>
-      <p className="text-zinc-500 mb-4 sm:mb-6 lg:mb-10 text-xs sm:text-sm flex-grow leading-relaxed">{translatedService.shortDesc}</p>
-      <a href={`#service-${service.id}`} className="inline-flex items-center text-white font-bold uppercase text-[8px] sm:text-[10px] tracking-[0.3em] sm:tracking-[0.4em] group-hover:text-red-500 transition-colors">
-        <span className="hidden sm:inline">{t.full_protocol}</span><span className="sm:hidden">Details</span> <ChevronRight size={12} className="ml-1 sm:ml-2 group-hover:translate-x-1 transition-transform" />
+      <div className="text-red-600 mb-6 transform group-hover:scale-110 transition-transform origin-left">{ICON_MAP[service.icon]}</div>
+      <h3 className="text-lg sm:text-xl font-black text-white uppercase mb-3 tracking-tighter group-hover:text-red-500 transition-colors leading-tight">{translatedService.title}</h3>
+      <p className="text-zinc-500 mb-6 text-sm flex-grow leading-relaxed">{translatedService.shortDesc}</p>
+      <a href={`#service-${service.id}`} className="inline-flex items-center text-white font-bold uppercase text-[10px] tracking-[0.3em] group-hover:text-red-500 transition-colors">
+        <span>{t.full_protocol}</span> <ChevronRight size={14} className="ml-2 group-hover:translate-x-1 transition-transform" />
       </a>
     </motion.div>
   );
@@ -581,9 +581,9 @@ export default function App() {
                     { label: t.stats_equipment, value: lang === 'en' ? 'Available' : 'Verfügbar' },
                     { label: t.stats_services, value: '4+' },
                   ].map((stat, i) => (
-                    <div key={i} className="text-center lg:text-left">
-                      <p className="text-zinc-600 font-technical text-[10px] uppercase tracking-[0.4em] mb-3">{stat.label}</p>
-                      <p className="text-2xl lg:text-3xl font-black text-white uppercase">{stat.value}</p>
+                    <div key={i} className="text-center">
+                      <p className="text-zinc-600 font-technical text-xs uppercase tracking-[0.3em] mb-4">{stat.label}</p>
+                      <p className="text-4xl lg:text-5xl font-black text-white uppercase">{stat.value}</p>
                     </div>
                   ))}
                 </div>
@@ -761,28 +761,39 @@ const Hero: React.FC<{ lang: Language }> = ({ lang }) => {
 const PricingSection: React.FC<{ lang: Language }> = ({ lang }) => {
   const t = translations[lang];
 
-  const diagnosticsItems = [
-    { name: t.pricing_diagnostic, price: "20", desc: lang === 'en' ? "Full system scan" : "Komplette Systemprüfung" },
-  ];
-
-  const maintenanceItems = [
-    { name: t.pricing_oil_change, price: "60+", desc: lang === 'en' ? "Synthetic oil included" : "Synthetisches Öl inklusive" },
-    { name: t.pricing_brake_pads, price: "80+", desc: lang === 'en' ? "Labor only" : "Nur Arbeitskosten" },
-    { name: t.pricing_battery, price: "40+", desc: lang === 'en' ? "Installation service" : "Einbauservice" },
-  ];
-
-  const tireItems = [
-    { name: t.pricing_wheel, price: "20", desc: lang === 'en' ? "Seasonal change" : "Saisonwechsel" },
-    { name: t.pricing_tire_16, price: "60", desc: lang === 'en' ? "Mount & balance" : "Montage & Auswuchten" },
-    { name: t.pricing_tire_17, price: "70", desc: lang === 'en' ? "Mount & balance" : "Montage & Auswuchten" },
-    { name: t.pricing_tire_18, price: "80", desc: lang === 'en' ? "Mount & balance" : "Montage & Auswuchten" },
-    { name: t.pricing_tire_19, price: "90", desc: lang === 'en' ? "Mount & balance" : "Montage & Auswuchten" },
-    { name: t.pricing_tire_20, price: "100", desc: lang === 'en' ? "Mount & balance" : "Montage & Auswuchten" },
-    { name: t.pricing_alignment, price: "80", desc: lang === 'en' ? "4-wheel alignment" : "4-Rad Achsvermessung" },
-  ];
-
-  const rentalItems = [
-    { name: t.pricing_lift, price: "20", desc: lang === 'en' ? "Tools included" : "Werkzeuge inklusive" },
+  const categories = [
+    {
+      title: lang === 'en' ? 'Diagnostics' : 'Diagnose',
+      items: [
+        { name: t.pricing_diagnostic, price: "20" },
+      ]
+    },
+    {
+      title: lang === 'en' ? 'Maintenance' : 'Wartung',
+      items: [
+        { name: t.pricing_oil_change, price: "60+" },
+        { name: t.pricing_brake_pads, price: "80+" },
+        { name: t.pricing_battery, price: "40+" },
+      ]
+    },
+    {
+      title: lang === 'en' ? 'Tires & Wheels' : 'Reifen & Räder',
+      items: [
+        { name: t.pricing_wheel, price: "20" },
+        { name: t.pricing_tire_16, price: "60" },
+        { name: t.pricing_tire_17, price: "70" },
+        { name: t.pricing_tire_18, price: "80" },
+        { name: t.pricing_tire_19, price: "90" },
+        { name: t.pricing_tire_20, price: "100" },
+        { name: t.pricing_alignment, price: "80" },
+      ]
+    },
+    {
+      title: lang === 'en' ? 'Equipment Rental' : 'Gerätevermietung',
+      items: [
+        { name: t.pricing_lift, price: "20" },
+      ]
+    },
   ];
 
   return (
@@ -794,82 +805,25 @@ const PricingSection: React.FC<{ lang: Language }> = ({ lang }) => {
           <p className="text-zinc-500 font-light text-sm leading-relaxed">{t.pricing_sub}</p>
         </div>
 
-        <div className="space-y-12">
-          {/* Diagnostics */}
-          <div>
-            <h3 className="text-red-600 font-black uppercase text-xs mb-6 tracking-[0.3em]">{lang === 'en' ? 'Diagnostics' : 'Diagnose'}</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-zinc-900 border border-zinc-900">
-              {diagnosticsItems.map((item, i) => (
-                <div key={i} className="p-6 bg-black hover:bg-zinc-950 transition-all group">
-                  <div className="flex items-baseline justify-between mb-2">
-                    <h4 className="text-white font-bold uppercase text-xs tracking-wide group-hover:text-red-500 transition-colors flex-1">{item.name}</h4>
-                    <div className="flex items-baseline space-x-1">
-                      <span className="text-red-600 text-2xl font-black">{item.price}</span>
-                      <span className="text-zinc-600 text-sm font-black">€</span>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {categories.map((category, catIndex) => (
+            <div key={catIndex} className="bg-zinc-950 border border-zinc-900 p-8">
+              <h3 className="text-red-600 font-black uppercase text-sm mb-8 tracking-wider">{category.title}</h3>
+              <div className="space-y-6">
+                {category.items.map((item, itemIndex) => (
+                  <div key={itemIndex} className="group">
+                    <div className="flex items-baseline justify-between mb-1">
+                      <span className="text-white font-bold text-sm uppercase tracking-wide group-hover:text-red-500 transition-colors">{item.name}</span>
+                      <div className="flex items-baseline space-x-1">
+                        <span className="text-red-600 text-xl font-black">{item.price}</span>
+                        <span className="text-zinc-600 text-xs font-black">€</span>
+                      </div>
                     </div>
                   </div>
-                  <p className="text-zinc-600 text-[10px] uppercase font-technical tracking-wider">{item.desc}</p>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-
-          {/* Maintenance */}
-          <div>
-            <h3 className="text-red-600 font-black uppercase text-xs mb-6 tracking-[0.3em]">{lang === 'en' ? 'Maintenance' : 'Wartung'}</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-zinc-900 border border-zinc-900">
-              {maintenanceItems.map((item, i) => (
-                <div key={i} className="p-6 bg-black hover:bg-zinc-950 transition-all group">
-                  <div className="flex items-baseline justify-between mb-2">
-                    <h4 className="text-white font-bold uppercase text-xs tracking-wide group-hover:text-red-500 transition-colors flex-1">{item.name}</h4>
-                    <div className="flex items-baseline space-x-1">
-                      <span className="text-red-600 text-2xl font-black">{item.price}</span>
-                      <span className="text-zinc-600 text-sm font-black">€</span>
-                    </div>
-                  </div>
-                  <p className="text-zinc-600 text-[10px] uppercase font-technical tracking-wider">{item.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Tires & Wheels */}
-          <div>
-            <h3 className="text-red-600 font-black uppercase text-xs mb-6 tracking-[0.3em]">{lang === 'en' ? 'Tires & Wheels' : 'Reifen & Räder'}</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-zinc-900 border border-zinc-900">
-              {tireItems.map((item, i) => (
-                <div key={i} className="p-6 bg-black hover:bg-zinc-950 transition-all group">
-                  <div className="flex items-baseline justify-between mb-2">
-                    <h4 className="text-white font-bold uppercase text-xs tracking-wide group-hover:text-red-500 transition-colors flex-1">{item.name}</h4>
-                    <div className="flex items-baseline space-x-1">
-                      <span className="text-red-600 text-2xl font-black">{item.price}</span>
-                      <span className="text-zinc-600 text-sm font-black">€</span>
-                    </div>
-                  </div>
-                  <p className="text-zinc-600 text-[10px] uppercase font-technical tracking-wider">{item.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Equipment Rental */}
-          <div>
-            <h3 className="text-red-600 font-black uppercase text-xs mb-6 tracking-[0.3em]">{lang === 'en' ? 'Equipment Rental' : 'Gerätevermietung'}</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-zinc-900 border border-zinc-900">
-              {rentalItems.map((item, i) => (
-                <div key={i} className="p-6 bg-black hover:bg-zinc-950 transition-all group">
-                  <div className="flex items-baseline justify-between mb-2">
-                    <h4 className="text-white font-bold uppercase text-xs tracking-wide group-hover:text-red-500 transition-colors flex-1">{item.name}</h4>
-                    <div className="flex items-baseline space-x-1">
-                      <span className="text-red-600 text-2xl font-black">{item.price}</span>
-                      <span className="text-zinc-600 text-sm font-black">€</span>
-                    </div>
-                  </div>
-                  <p className="text-zinc-600 text-[10px] uppercase font-technical tracking-wider">{item.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>
