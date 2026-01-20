@@ -569,10 +569,22 @@ export default function App() {
                     <div className="py-20 text-center"><CheckCircle2 className="mx-auto text-red-600 mb-8" size={64}/><h3 className="text-3xl font-black uppercase text-white">Confirmed</h3><p className="text-zinc-500">Stand by for engagement.</p></div>
                   ) : (
                     <form onSubmit={async (e) => { e.preventDefault(); const fd = new FormData(e.currentTarget as HTMLFormElement); await api.submitLead(Object.fromEntries(fd)); setSubmitted(true); }} className="space-y-8">
-                      <input name="name" required placeholder="NAME" className="w-full bg-black border border-zinc-800 p-5 text-white outline-none focus:border-red-600 transition-all" />
-                      <input name="phone" required placeholder="PHONE" className="w-full bg-black border border-zinc-800 p-5 text-white outline-none focus:border-red-600 transition-all" />
-                      <input name="car" required placeholder="CAR (MODEL/YEAR)" className="w-full bg-black border border-zinc-800 p-5 text-white outline-none focus:border-red-600 transition-all" />
-                      <textarea name="issue" rows={4} className="w-full bg-black border border-zinc-800 p-5 text-white outline-none focus:border-red-600 transition-all" placeholder="DESCRIBE THE ISSUE"></textarea>
+                      <div>
+                        <label className="text-[10px] font-technical text-zinc-600 uppercase mb-2 block tracking-[0.2em]">Full Name</label>
+                        <input name="name" required placeholder="NAME" className="w-full bg-black border border-zinc-800 p-5 text-white outline-none focus:border-red-600 transition-all" />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-technical text-zinc-600 uppercase mb-2 block tracking-[0.2em]">Phone Number</label>
+                        <input name="phone" required placeholder="PHONE" className="w-full bg-black border border-zinc-800 p-5 text-white outline-none focus:border-red-600 transition-all" />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-technical text-zinc-600 uppercase mb-2 block tracking-[0.2em]">Vehicle</label>
+                        <input name="car" required placeholder="CAR (MODEL/YEAR)" className="w-full bg-black border border-zinc-800 p-5 text-white outline-none focus:border-red-600 transition-all" />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-technical text-zinc-600 uppercase mb-2 block tracking-[0.2em]">Issue Description</label>
+                        <textarea name="issue" rows={4} className="w-full bg-black border border-zinc-800 p-5 text-white outline-none focus:border-red-600 transition-all" placeholder="DESCRIBE THE ISSUE"></textarea>
+                      </div>
                       <button type="submit" className="w-full bg-red-600 text-white p-6 font-black uppercase text-xl shadow-xl hover:bg-white hover:text-black transition-all">Submit Protocol</button>
                     </form>
                   )}
@@ -641,21 +653,48 @@ export default function App() {
 const Hero: React.FC<{ lang: Language }> = ({ lang }) => {
   const t = translations[lang];
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#050505]">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black">
       {/* Animated Gradient Background */}
       <div className="absolute inset-0 z-0 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-red-600/10 via-pink-500/5 to-zinc-900/10 animate-[gradient_8s_ease_infinite]"
-             style={{
-               backgroundSize: '400% 400%',
-               animation: 'gradient 15s ease infinite'
-             }}></div>
+        <div
+          className="absolute inset-0"
+          style={{
+            background: 'linear-gradient(45deg, #FF9FFC, #ca0202, #e2a2a2, #ff3838)',
+            backgroundSize: '400% 400%',
+            animation: 'gradient-shift 20s ease infinite',
+            opacity: 0.15
+          }}
+        ></div>
+        <div
+          className="absolute inset-0"
+          style={{
+            background: 'radial-gradient(circle at 20% 50%, rgba(255, 159, 252, 0.2) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(202, 2, 2, 0.2) 0%, transparent 50%), radial-gradient(circle at 40% 20%, rgba(255, 56, 56, 0.15) 0%, transparent 50%)',
+            animation: 'pulse 8s ease-in-out infinite'
+          }}
+        ></div>
         <style>{`
-          @keyframes gradient {
+          @keyframes gradient-shift {
             0%, 100% {
               background-position: 0% 50%;
             }
-            50% {
+            25% {
               background-position: 100% 50%;
+            }
+            50% {
+              background-position: 100% 100%;
+            }
+            75% {
+              background-position: 0% 100%;
+            }
+          }
+          @keyframes pulse {
+            0%, 100% {
+              opacity: 1;
+              transform: scale(1);
+            }
+            50% {
+              opacity: 0.8;
+              transform: scale(1.05);
             }
           }
         `}</style>
